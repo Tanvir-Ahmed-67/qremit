@@ -310,8 +310,7 @@ public class NafexModel {
                 '}';
     }
 
-    public NafexModel(int id, String exCode, String tranNo, String currency, double amount, String enteredDate, String remitter, String beneficiary, String beneficiaryAccount, String beneficiaryMobile, String bankName, String bankCode, String branchName, String branchCode, String draweeBranchName, String draweeBranchCode, String purposeOfRemittance, String sourceOfIncome, String remitterMobile, String checkT24, String checkCoc, String checkAccPayee, String checkBeftn, String fileUploadedDateTime, String fileUploadedUserIp, String checkProcessed) {
-        this.id = id;
+    public NafexModel(String exCode, String tranNo, String currency, double amount, String enteredDate, String remitter, String beneficiary, String beneficiaryAccount, String beneficiaryMobile, String bankName, String bankCode, String branchName, String branchCode, String draweeBranchName, String draweeBranchCode, String purposeOfRemittance, String sourceOfIncome, String remitterMobile, String checkT24, String checkCoc, String checkAccPayee, String checkBeftn, String fileUploadedDateTime, String fileUploadedUserIp, String checkProcessed) {
         this.exCode = exCode;
         this.tranNo = tranNo;
         this.currency = currency;

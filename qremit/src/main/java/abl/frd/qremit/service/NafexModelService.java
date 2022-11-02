@@ -39,9 +39,9 @@ public class NafexModelService {
         try
         {
             List<NafexModel> nafexModels = NafexModelServiceHelper.csvToNafexModels(file.getInputStream());
-            exchangeCodeMappingForService = mapExchangeCode();
+            //exchangeCodeMappingForService = mapExchangeCode();
             for(NafexModel nafexModel : nafexModels){
-                nafexModel.setExCode(exchangeCodeMappingForService.get(nafexModel.getExCode()).trim());
+                nafexModel.setExCode("7010234");
             }
             nafexModelRepository.saveAll(nafexModels);
         } catch (IOException e) {

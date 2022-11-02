@@ -4,11 +4,8 @@ import abl.frd.qremit.model.NafexModel;
 import org.apache.commons.csv.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class NafexModelServiceHelper {
@@ -24,35 +21,50 @@ public class NafexModelServiceHelper {
     }
     public static List<NafexModel> csvToNafexModels(InputStream is) {
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());) {
+             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withIgnoreHeaderCase().withTrim());) {
             List<NafexModel> nafexDataModelList = new ArrayList<>();
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             for (CSVRecord csvRecord : csvRecords) {
-                System.out.println("----------------------"+csvRecord.toMap());
-                //NafexModel nafexDataModel = new NafexModel(
-                        /*
-                        csvRecord.get("Excode").replace("\"", ""),
-                        csvRecord.get("Tranno").replace("\"", ""),
-                        csvRecord.get("Currency").replace("\"", ""),
-                        Double.parseDouble(csvRecord.get("Amount").replace("\"", "")),
-                        csvRecord.get("Entered Date").replace("\"", ""),
-                        csvRecord.get("Remitter").replace("\"", ""),
-                        csvRecord.get("Beneficiary").replace("\"", ""),
-                        csvRecord.get("Bene A/C").replace("\"", ""),
-                        csvRecord.get("Bank Name").replace("\"", ""),
-                        csvRecord.get("Bank Code").replace("\"", ""),
-                        csvRecord.get("Branch Name").replace("\"", ""),
-                        csvRecord.get("Branch Code").replace("\"", ""));
+                String singleLineOfData = csvRecord.get(0);
+                String[] columnNumber = singleLineOfData.split("\\|");
+                NafexModel nafexDataModel = new NafexModel(
+                        columnNumber[0].toString(), //exCode
+                        columnNumber[1].toString(), //Tranno
+                        columnNumber[2].toString(), //Currency
+                        Double.parseDouble(columnNumber[3].toString()), //Amount
+                        columnNumber[4].toString(), //enteredDate
+                        columnNumber[5].toString(), //remitter
 
-                         */
-               // nafexDataModelList.add(nafexDataModel);
+                        columnNumber[6].toString(), // beneficiary
+                        columnNumber[7].toString(), //beneficiaryAccount
+                        columnNumber[8].toString(), //beneficiaryMobile
+                        columnNumber[9].toString(), //bankName
+                        columnNumber[10].toString(), //bankCode
+                        columnNumber[11].toString(), //branchName
+                        columnNumber[12].toString(), // branchCode
+
+                        columnNumber[13].toString(), //draweeBranchName
+                        columnNumber[14].toString(), //draweeBranchCode
+                        columnNumber[15].toString(), //purposeOfRemittance
+                        columnNumber[16].toString(), //sourceOfIncome
+                        columnNumber[17].toString(), //remitterMobile
+
+                        "1", // checkT24
+                        "2", //checkCoc
+                        "3", //checkAccPayee
+                        "4", //checkBeftn
+                        "5", //fileUploadedDateTime
+                        "6", //fileUploadedUserIp
+                        "checked"); //checkProcessed
+
+                nafexDataModelList.add(nafexDataModel);
             }
             return nafexDataModelList;
         } catch (IOException e) {
             throw new RuntimeException("fail to parse CSV file: " + e.getMessage());
         }
     }
-
+    // Need to implement this method
     public static ByteArrayInputStream nafexModelToCSV(List<NafexModel> nafexDataModelList) {
         final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.NON_NUMERIC);
 
@@ -87,7 +99,6 @@ public class NafexModelServiceHelper {
                 );
                 csvPrinter.printRecord(data);
             }
-
             csvPrinter.flush();
             return new ByteArrayInputStream(out.toByteArray());
         } catch (IOException e) {
