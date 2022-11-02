@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class NafexModelServiceHelper {
@@ -49,13 +51,13 @@ public class NafexModelServiceHelper {
                         columnNumber[16].toString(), //sourceOfIncome
                         columnNumber[17].toString(), //remitterMobile
 
-                        "1", // checkT24
-                        "2", //checkCoc
-                        "3", //checkAccPayee
-                        "4", //checkBeftn
-                        "5", //fileUploadedDateTime
-                        "6", //fileUploadedUserIp
-                        "checked"); //checkProcessed
+                        putOnlineFlag(columnNumber[7].toString()), // checkT24
+                        putCocFlag(columnNumber[7].toString()), //checkCoc
+                        "0", //checkAccPayee
+                        putBeftnFlag(columnNumber[11].toString()), //checkBeftn
+                        "0", //fileUploadedDateTime
+                        "0", //fileUploadedUserIp
+                        "0"); //checkProcessed
 
                 nafexDataModelList.add(nafexDataModel);
             }
@@ -106,7 +108,7 @@ public class NafexModelServiceHelper {
         }
     }
 
-    public String checkCoc(String accountNumber){
+    public static String putCocFlag(String accountNumber){
         if(accountNumber.contains("coc") || accountNumber.contains("COC") ){
             return "1";
         }
@@ -114,7 +116,39 @@ public class NafexModelServiceHelper {
             return "0";
         }
     }
-    public String checkOnlineT24(String accountNumber){
-        return "0";
+    public static String getOnlineAccountNumber(String accountNumber){
+        //^.*02000(\d{8}).*$
+        Pattern p = Pattern.compile("^.*02000(\\d{8}).*$");
+        Matcher m = p.matcher(accountNumber);
+        String onlineAccountNumber=null;
+        if (m.find())
+        {
+            onlineAccountNumber = m.group(1);
+        }
+        return onlineAccountNumber;
+    }
+    public static String putOnlineFlag(String accountNumber){
+        if(!isOnlineAccoutNumberFound(accountNumber)){
+            return "0";
+        }
+        return "1";
+    }
+    public static boolean isOnlineAccoutNumberFound(String accountNumber){
+        Pattern p = Pattern.compile("^.*02000(\\d{8}).*$");
+        Matcher m = p.matcher(accountNumber);
+        if (!m.find())
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public static String putBeftnFlag(String bankName){
+        if(bankName.contains("AGRANI") || bankName.contains("agrani")|| bankName.contains("Agrani") || bankName.contains("abl") || bankName.contains("Abl") || bankName.contains("ABL")){
+            return "0";
+        }
+        else{
+            return "1";
+        }
     }
 }
