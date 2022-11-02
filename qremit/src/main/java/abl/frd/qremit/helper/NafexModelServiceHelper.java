@@ -105,4 +105,16 @@ public class NafexModelServiceHelper {
             throw new RuntimeException("fail to import data to CSV file: " + e.getMessage());
         }
     }
+
+    public String checkCoc(String accountNumber){
+        if(accountNumber.contains("coc") || accountNumber.contains("COC") ){
+            return "1";
+        }
+        else {
+            return "0";
+        }
+    }
+    public String checkOnlineT24(String accountNumber){
+        return "0";
+    }
 }
