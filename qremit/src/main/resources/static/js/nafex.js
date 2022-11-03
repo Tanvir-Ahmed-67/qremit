@@ -32,12 +32,12 @@ function uploadSingleFile(file) {
 }
 function clearDataTable(){
     var xhr1 = new XMLHttpRequest();
-    xhr1.open("GET", "/qremit/cleardb");
+    xhr1.open("GET", "/qremit/processData");
     xhr1.onload = function() {
         console.log(xhr1.responseText);
         if(xhr1.status == 200) {
             singleFileUploadError.style.display = "none";
-            singleFileUploadSuccess.innerHTML = "<p>Database Cleared!</p>";
+            singleFileUploadSuccess.innerHTML = "<p>File Generated!</p>";
             singleFileUploadSuccess.style.display = "block";
         } else {
             singleFileUploadSuccess.style.display = "none";

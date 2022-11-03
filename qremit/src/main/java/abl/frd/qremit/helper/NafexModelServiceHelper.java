@@ -39,11 +39,11 @@ public class NafexModelServiceHelper {
 
                         columnNumber[6].toString(), // beneficiary
                         columnNumber[7].toString(), //beneficiaryAccount
-                        columnNumber[8].toString(), //beneficiaryMobile
-                        columnNumber[9].toString(), //bankName
-                        columnNumber[10].toString(), //bankCode
-                        columnNumber[11].toString(), //branchName
-                        columnNumber[12].toString(), // branchCode
+                        columnNumber[12].toString(), //beneficiaryMobile
+                        columnNumber[8].toString(), //bankName
+                        columnNumber[9].toString(), //bankCode
+                        columnNumber[10].toString(), //branchName
+                        columnNumber[11].toString(), // branchCode
 
                         columnNumber[13].toString(), //draweeBranchName
                         columnNumber[14].toString(), //draweeBranchCode
@@ -54,7 +54,7 @@ public class NafexModelServiceHelper {
                         putOnlineFlag(columnNumber[7].toString()), // checkT24
                         putCocFlag(columnNumber[7].toString()), //checkCoc
                         "0", //checkAccPayee
-                        putBeftnFlag(columnNumber[11].toString()), //checkBeftn
+                        putBeftnFlag(columnNumber[8].toString()), //checkBeftn
                         "0", //fileUploadedDateTime
                         "0", //fileUploadedUserIp
                         "0"); //checkProcessed
@@ -109,11 +109,16 @@ public class NafexModelServiceHelper {
     }
 
     public static String putCocFlag(String accountNumber){
-        if(accountNumber.contains("coc") || accountNumber.contains("COC") ){
-            return "1";
-        }
-        else {
+        if(isOnlineAccoutNumberFound(accountNumber)){
             return "0";
+        }
+        else{
+            if(accountNumber.contains("coc") || accountNumber.contains("COC") ){
+                return "1";
+            }
+            else {
+                return "0";
+            }
         }
     }
     public static String getOnlineAccountNumber(String accountNumber){
@@ -128,20 +133,26 @@ public class NafexModelServiceHelper {
         return onlineAccountNumber;
     }
     public static String putOnlineFlag(String accountNumber){
-        if(!isOnlineAccoutNumberFound(accountNumber)){
+        if(isOnlineAccoutNumberFound(accountNumber)){
+
+            return "1";
+        }
+        else{
             return "0";
         }
-        return "1";
     }
     public static boolean isOnlineAccoutNumberFound(String accountNumber){
         Pattern p = Pattern.compile("^.*02000(\\d{8}).*$");
         Matcher m = p.matcher(accountNumber);
-        if (!m.find())
+        if (m.find())
         {
+            return true;
+        }
+        else{
             return false;
         }
-        return true;
     }
+
 
     public static String putBeftnFlag(String bankName){
         if(bankName.contains("AGRANI") || bankName.contains("agrani")|| bankName.contains("Agrani") || bankName.contains("abl") || bankName.contains("Abl") || bankName.contains("ABL")){
@@ -151,4 +162,6 @@ public class NafexModelServiceHelper {
             return "1";
         }
     }
+
+    // truncate table nafex_data_table;
 }

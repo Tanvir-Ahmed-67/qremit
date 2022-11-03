@@ -58,4 +58,31 @@ public class NafexModelService {
         return nafexModelRepository.findAll();
     }
 
+
+    public Map<String, List<NafexModel>> addDifferentModelsIntoMap(List<NafexModel> nafexModelHavingOnlineAccount, List<NafexModel> nafexModelHavingCoc, List<NafexModel> nafexModelHavingBeftn, List<NafexModel> nafexModelHavingAccountPayee){
+        Map<String, List<NafexModel>> mappedResponseModel = null;
+        mappedResponseModel.put("online", nafexModelHavingOnlineAccount);
+        mappedResponseModel.put("coc", nafexModelHavingCoc);
+        mappedResponseModel.put("beftn", nafexModelHavingBeftn);
+        mappedResponseModel.put("accountPayee", nafexModelHavingAccountPayee);
+        System.out.println(">>>>>>>>>>>>>>>>>>>inside addDifferentModelsIntoMap() method ");
+        return mappedResponseModel;
+    }
+
+    public List<NafexModel> findAllNafexModelHavingOnlineAccount() {
+        System.out.println("...........findAllNafexModelHavingOnlineAccount................");
+        return nafexModelRepository.findAllNafexModelHavingOnlineAccount();
+    }
+    public List<NafexModel> findAllNafexModelHavingCoc() {
+        System.out.println("...........findAllNafexModelHavingCoc................");
+        return nafexModelRepository.findAllNafexModelHavingCoc();
+    }
+    public List<NafexModel> findAllNafexModelHavingBeftn() {
+        System.out.println("...........findAllNafexModelHavingBeftn................");
+        return nafexModelRepository.findAllNafexModelHavingBeftn();
+    }
+    public List<NafexModel> findAllNafexModelHavingAccountPayee() {
+        System.out.println("...........findAllNafexModelHavingAccountPayee................");
+        return nafexModelRepository.findAllNafexModelHavingAccountPayee();
+    }
 }

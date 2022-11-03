@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/qremit")
@@ -82,5 +83,25 @@ public class NafexModelController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+fileNameWithoutExtension+".txt")
                 .contentType(MediaType.parseMediaType("application/csv"))
                 .body(file);
+    }
+
+    @GetMapping("/processData")
+    public ResponseEntity<Map<String, List<NafexModel>>> generateSeparateFiles() {
+        System.out.println("...........Controller................");
+        try {
+            List<NafexModel> nafexModelHavingOnlineAccount = nafexModelService.findAllNafexModelHavingOnlineAccount();
+            List<NafexModel> nafexModelHavingCoc = nafexModelService.findAllNafexModelHavingCoc();
+            List<NafexModel> nafexModelHavingBeftn = nafexModelService.findAllNafexModelHavingBeftn();
+            List<NafexModel> nafexModelHavingAccountPayee = nafexModelService.findAllNafexModelHavingAccountPayee();
+            System.out.println("..........................."+nafexModelHavingOnlineAccount);
+            System.out.println("..........................."+nafexModelHavingCoc);
+            System.out.println("..........................."+nafexModelHavingBeftn);
+            System.out.println("..........................."+nafexModelHavingAccountPayee);
+            Map<String, List<NafexModel>> mappedDifferentResponseModels = nafexModelService.addDifferentModelsIntoMap(nafexModelHavingOnlineAccount, nafexModelHavingCoc, nafexModelHavingBeftn, nafexModelHavingAccountPayee);
+            System.out.println("..........................."+mappedDifferentResponseModels);
+            return new ResponseEntity<>(mappedDifferentResponseModels, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
