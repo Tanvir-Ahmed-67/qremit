@@ -38,12 +38,13 @@ public class NafexModelController {
     @PostMapping("/upload")
     public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
         String message = "";
+        String count ="";
         if (NafexModelServiceHelper.hasCSVFormat(file)) {
             int extensionIndex = file.getOriginalFilename().lastIndexOf(".");
             String fileNameWithoutExtension = file.getOriginalFilename().substring(0,extensionIndex);
             try {
-                nafexModelService.save(file);
-                message = "Uploaded the file successfully: " + file.getOriginalFilename();
+                count = nafexModelService.save(file);
+                //message ="Uploaded the file successfully: " + file.getOriginalFilename();
                 String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                         .path("/qremit/download/")
                         .path(fileNameWithoutExtension+".txt")
@@ -53,7 +54,7 @@ public class NafexModelController {
             } catch (Exception e) {
                 e.printStackTrace();
                 message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message,""));
+                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(count,""));
             }
         }
 

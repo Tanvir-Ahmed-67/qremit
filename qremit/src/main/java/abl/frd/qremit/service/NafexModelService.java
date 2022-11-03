@@ -35,7 +35,8 @@ public class NafexModelService {
         return exchangeCodeMapperModelRepository.findAll();
     }
 
-    public void save(MultipartFile file) {
+    public String save(MultipartFile file) {
+        String numberOfRows=null;
         try
         {
             List<NafexModel> nafexModels = NafexModelServiceHelper.csvToNafexModels(file.getInputStream());
@@ -44,6 +45,8 @@ public class NafexModelService {
                 nafexModel.setExCode("7010234");
             }
             nafexModelRepository.saveAll(nafexModels);
+            numberOfRows = String.valueOf(nafexModelRepository.count());
+            return numberOfRows;
         } catch (IOException e) {
             throw new RuntimeException("fail to store csv data: " + e.getMessage());
         }
