@@ -23,7 +23,7 @@ public class NafexModelServiceHelper {
     }
     public static List<NafexModel> csvToNafexModels(InputStream is) {
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withIgnoreHeaderCase().withTrim());) {
+             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withIgnoreHeaderCase().withTrim())) {
             List<NafexModel> nafexDataModelList = new ArrayList<>();
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             for (CSVRecord csvRecord : csvRecords) {
@@ -71,7 +71,7 @@ public class NafexModelServiceHelper {
         final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.NON_NUMERIC);
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format);) {
+             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format)) {
             for (NafexModel nafexDataModel : nafexDataModelList) {
                 List<Object> data = Arrays.asList(
                         nafexDataModel.getTranNo(),
@@ -134,7 +134,6 @@ public class NafexModelServiceHelper {
     }
     public static String putOnlineFlag(String accountNumber){
         if(isOnlineAccoutNumberFound(accountNumber)){
-
             return "1";
         }
         else{
