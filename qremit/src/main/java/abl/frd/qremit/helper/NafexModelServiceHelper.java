@@ -49,10 +49,10 @@ public class NafexModelServiceHelper {
                         csvRecord.get(16), //sourceOfIncome
                         csvRecord.get(17), //remitterMobile
 
-                        putOnlineFlag(csvRecord.get(7)), // checkT24
-                        putCocFlag(csvRecord.get(7)), //checkCoc
+                        putOnlineFlag(csvRecord.get(7).trim()), // checkT24
+                        putCocFlag(csvRecord.get(7).trim()), //checkCoc
                         "0", //checkAccPayee
-                        putBeftnFlag(csvRecord.get(8)), //checkBeftn
+                        putBeftnFlag(csvRecord.get(8).trim()), //checkBeftn
                         "0", //fileUploadedDateTime
                         "0", //fileUploadedUserIp
                         "0"); //checkProcessed
@@ -218,8 +218,8 @@ public class NafexModelServiceHelper {
         }
     }
     public static String getOnlineAccountNumber(String accountNumber){
-        //^.*02000(\d{8}).*$
-        Pattern p = Pattern.compile("^.*02000(\\d{8}).*$");
+        //^.*02000(\d{8})$.*
+        Pattern p = Pattern.compile("^.*02000(\\d{8})$.*");
         Matcher m = p.matcher(accountNumber);
         String onlineAccountNumber=null;
         if (m.find())
@@ -237,10 +237,12 @@ public class NafexModelServiceHelper {
         }
     }
     public static boolean isOnlineAccoutNumberFound(String accountNumber){
-        Pattern p = Pattern.compile("^.*02000(\\d{8}).*$");
+        System.out.println(accountNumber);
+        Pattern p = Pattern.compile("^.*02000(\\d{8})$.*");
         Matcher m = p.matcher(accountNumber);
         if (m.find())
         {
+            System.out.println("T24 Account No Found -"+accountNumber);
             return true;
         }
         else{
