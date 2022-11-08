@@ -57,7 +57,6 @@ public class NafexModelController {
                 return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(count,""));
             }
         }
-
         message = "Please upload a csv file!";
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message,""));
     }
@@ -88,18 +87,18 @@ public class NafexModelController {
 
     @GetMapping("/processData")
     public ResponseEntity<Map<String, List<NafexModel>>> generateSeparateFiles() {
-        System.out.println("...........Controller................");
         try {
             List<NafexModel> nafexModelHavingOnlineAccount = nafexModelService.findAllNafexModelHavingOnlineAccount();
             List<NafexModel> nafexModelHavingCoc = nafexModelService.findAllNafexModelHavingCoc();
             List<NafexModel> nafexModelHavingBeftn = nafexModelService.findAllNafexModelHavingBeftn();
             List<NafexModel> nafexModelHavingAccountPayee = nafexModelService.findAllNafexModelHavingAccountPayee();
-            System.out.println("..........................."+nafexModelHavingOnlineAccount);
-            System.out.println("..........................."+nafexModelHavingCoc);
-            System.out.println("..........................."+nafexModelHavingBeftn);
-            System.out.println("..........................."+nafexModelHavingAccountPayee);
+            System.out.println("Having Online Account................."+nafexModelHavingOnlineAccount);
+            System.out.println("Having Coc..........................."+nafexModelHavingCoc);
+            System.out.println("Having Beftn..........................."+nafexModelHavingBeftn);
+
+            System.out.println("Having Account Payee..........................."+nafexModelHavingAccountPayee);
             Map<String, List<NafexModel>> mappedDifferentResponseModels = nafexModelService.addDifferentModelsIntoMap(nafexModelHavingOnlineAccount, nafexModelHavingCoc, nafexModelHavingBeftn, nafexModelHavingAccountPayee);
-            System.out.println("..........................."+mappedDifferentResponseModels);
+            //System.out.println("..........................."+mappedDifferentResponseModels);
             return new ResponseEntity<>(mappedDifferentResponseModels, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

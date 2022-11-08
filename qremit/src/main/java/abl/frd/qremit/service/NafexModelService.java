@@ -48,24 +48,19 @@ public class NafexModelService {
         mappedResponseModel.put("coc", nafexModelHavingCoc);
         mappedResponseModel.put("beftn", nafexModelHavingBeftn);
         mappedResponseModel.put("accountPayee", nafexModelHavingAccountPayee);
-        System.out.println(">>>>>>>>>>>>>>>>>>>inside addDifferentModelsIntoMap() method ");
         return mappedResponseModel;
     }
 
     public List<NafexModel> findAllNafexModelHavingOnlineAccount() {
-        System.out.println("...........findAllNafexModelHavingOnlineAccount................");
         return nafexModelRepository.findAllNafexModelHavingOnlineAccount();
     }
     public List<NafexModel> findAllNafexModelHavingCoc() {
-        System.out.println("...........findAllNafexModelHavingCoc................");
         return nafexModelRepository.findAllNafexModelHavingCoc();
     }
     public List<NafexModel> findAllNafexModelHavingBeftn() {
-        System.out.println("...........findAllNafexModelHavingBeftn................");
         return nafexModelRepository.findAllNafexModelHavingBeftn();
     }
     public List<NafexModel> findAllNafexModelHavingAccountPayee() {
-        System.out.println("...........findAllNafexModelHavingAccountPayee................");
         return nafexModelRepository.findAllNafexModelHavingAccountPayee();
     }
 }

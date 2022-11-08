@@ -27,34 +27,32 @@ public class NafexModelServiceHelper {
             List<NafexModel> nafexDataModelList = new ArrayList<>();
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             for (CSVRecord csvRecord : csvRecords) {
-                String singleLineOfData = csvRecord.get(0);
-                String[] columnNumber = singleLineOfData.split("\\|");
                 NafexModel nafexDataModel = new NafexModel(
-                        columnNumber[0].toString(), //exCode
-                        columnNumber[1].toString(), //Tranno
-                        columnNumber[2].toString(), //Currency
-                        Double.parseDouble(columnNumber[3].toString()), //Amount
-                        columnNumber[4].toString(), //enteredDate
-                        columnNumber[5].toString(), //remitter
+                        csvRecord.get(0), //exCode
+                        csvRecord.get(1), //Tranno
+                        csvRecord.get(2), //Currency
+                        Double.parseDouble(csvRecord.get(3)), //Amount
+                        csvRecord.get(4), //enteredDate
+                        csvRecord.get(5), //remitter
 
-                        columnNumber[6].toString(), // beneficiary
-                        columnNumber[7].toString(), //beneficiaryAccount
-                        columnNumber[12].toString(), //beneficiaryMobile
-                        columnNumber[8].toString(), //bankName
-                        columnNumber[9].toString(), //bankCode
-                        columnNumber[10].toString(), //branchName
-                        columnNumber[11].toString(), // branchCode
+                        csvRecord.get(6), // beneficiary
+                        csvRecord.get(7), //beneficiaryAccount
+                        csvRecord.get(12), //beneficiaryMobile
+                        csvRecord.get(8), //bankName
+                        csvRecord.get(9), //bankCode
+                        csvRecord.get(10), //branchName
+                        csvRecord.get(11), // branchCode
 
-                        columnNumber[13].toString(), //draweeBranchName
-                        columnNumber[14].toString(), //draweeBranchCode
-                        columnNumber[15].toString(), //purposeOfRemittance
-                        columnNumber[16].toString(), //sourceOfIncome
-                        columnNumber[17].toString(), //remitterMobile
+                        csvRecord.get(13), //draweeBranchName
+                        csvRecord.get(14), //draweeBranchCode
+                        csvRecord.get(15), //purposeOfRemittance
+                        csvRecord.get(16), //sourceOfIncome
+                        csvRecord.get(17), //remitterMobile
 
-                        putOnlineFlag(columnNumber[7].toString()), // checkT24
-                        putCocFlag(columnNumber[7].toString()), //checkCoc
+                        putOnlineFlag(csvRecord.get(7)), // checkT24
+                        putCocFlag(csvRecord.get(7)), //checkCoc
                         "0", //checkAccPayee
-                        putBeftnFlag(columnNumber[8].toString()), //checkBeftn
+                        putBeftnFlag(csvRecord.get(8)), //checkBeftn
                         "0", //fileUploadedDateTime
                         "0", //fileUploadedUserIp
                         "0"); //checkProcessed
