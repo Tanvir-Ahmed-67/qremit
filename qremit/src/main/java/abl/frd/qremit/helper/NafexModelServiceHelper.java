@@ -249,6 +249,22 @@ public class NafexModelServiceHelper {
             return false;
         }
     }
+    public static boolean isCocFound(String accountNumber){
+        if(accountNumber.contains("coc") || accountNumber.contains("COC") ){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    public static boolean isBeftnFound(String bankName){
+        if(bankName.contains("AGRANI") || bankName.contains("agrani")|| bankName.contains("Agrani") || bankName.contains("abl") || bankName.contains("Abl") || bankName.contains("ABL")){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
 
 
     public static String putBeftnFlag(String bankName){
