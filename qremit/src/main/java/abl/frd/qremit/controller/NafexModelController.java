@@ -74,6 +74,7 @@ public class NafexModelController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/download/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
         InputStreamResource file = new InputStreamResource(nafexModelService.load());
@@ -86,22 +87,53 @@ public class NafexModelController {
     }
 
     @GetMapping("/processData")
-    public ResponseEntity<Map<String, List<NafexModel>>> generateSeparateFiles() {
+    public List<ResponseEntity> generateSeparateFiles() {
+        List<ResponseEntity> allResponseEntity = null;
         try {
-            List<NafexModel> nafexModelHavingOnlineAccount = nafexModelService.findAllNafexModelHavingOnlineAccount();
-            List<NafexModel> nafexModelHavingCoc = nafexModelService.findAllNafexModelHavingCoc();
-            List<NafexModel> nafexModelHavingBeftn = nafexModelService.findAllNafexModelHavingBeftn();
-            List<NafexModel> nafexModelHavingAccountPayee = nafexModelService.findAllNafexModelHavingAccountPayee();
-            System.out.println("Having Online Account................."+nafexModelHavingOnlineAccount);
-            System.out.println("Having Coc..........................."+nafexModelHavingCoc);
-            System.out.println("Having Beftn..........................."+nafexModelHavingBeftn);
+            System.out.println("...................................");
 
-            System.out.println("Having Account Payee..........................."+nafexModelHavingAccountPayee);
-            Map<String, List<NafexModel>> mappedDifferentResponseModels = nafexModelService.addDifferentModelsIntoMap(nafexModelHavingOnlineAccount, nafexModelHavingCoc, nafexModelHavingBeftn, nafexModelHavingAccountPayee);
+            InputStreamResource onlineFile = new InputStreamResource(nafexModelService.findAllNafexModelHavingOnlineAccount());
+            InputStreamResource cocFile = new InputStreamResource(nafexModelService.findAllNafexModelHavingCoc());
+
+            System.out.println("...............doneOnline...................."+onlineFile.toString());
+            System.out.println("...............doneCoc...................."+cocFile.toString());
+
+
+            ResponseEntity onlineResponseEntity = null;
+            onlineResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+"Online.txt")
+                    .contentType(MediaType.parseMediaType("application/csv"))
+                    .body(onlineFile);
+
+
+            ResponseEntity cocResponseEntity = null;
+            cocResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+"Coc.txt")
+                    .contentType(MediaType.parseMediaType("application/csv"))
+                    .body(cocFile);
+
+
+            allResponseEntity.add(onlineResponseEntity);
+            allResponseEntity.add(cocResponseEntity);
+
+            System.out.println("..................................."+allResponseEntity);
+
+          // List<NafexModel> nafexModelHavingOnlineAccount = nafexModelService.findAllNafexModelHavingOnlineAccount();
+           // List<NafexModel> nafexModelHavingCoc = nafexModelService.findAllNafexModelHavingCoc();
+           // List<NafexModel> nafexModelHavingBeftn = nafexModelService.findAllNafexModelHavingBeftn();
+           // List<NafexModel> nafexModelHavingAccountPayee = nafexModelService.findAllNafexModelHavingAccountPayee();
+
+            // System.out.println("Having Online Account................."+nafexModelHavingOnlineAccount);
+           // System.out.println("Having Coc..........................."+nafexModelHavingCoc);
+           // System.out.println("Having Beftn..........................."+nafexModelHavingBeftn);
+           // System.out.println("Having Account Payee..........................."+nafexModelHavingAccountPayee);
+
+          // Map<String, List<NafexModel>> mappedDifferentResponseModels = nafexModelService.addDifferentModelsIntoMap(nafexModelHavingOnlineAccount, nafexModelHavingCoc, nafexModelHavingBeftn, nafexModelHavingAccountPayee);
             //System.out.println("..........................."+mappedDifferentResponseModels);
-            return new ResponseEntity<>(mappedDifferentResponseModels, HttpStatus.OK);
+           // return new ResponseEntity<>(mappedDifferentResponseModels, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            //return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        return allResponseEntity;
     }
 }

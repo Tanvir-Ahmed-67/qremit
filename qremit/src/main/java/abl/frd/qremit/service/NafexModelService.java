@@ -51,16 +51,24 @@ public class NafexModelService {
         return mappedResponseModel;
     }
 
-    public List<NafexModel> findAllNafexModelHavingOnlineAccount() {
-        return nafexModelRepository.findAllNafexModelHavingOnlineAccount();
+    public ByteArrayInputStream findAllNafexModelHavingOnlineAccount() {
+        List<NafexModel> allModelsHavingOnline = nafexModelRepository.findAllNafexModelHavingOnlineAccount();
+        System.out.println("allModelsHavingOnline: "+allModelsHavingOnline.toString());
+        ByteArrayInputStream in = NafexModelServiceHelper.generateTextFileForNafexModelHavingOnlineAccount(allModelsHavingOnline);
+        return in;
     }
-    public List<NafexModel> findAllNafexModelHavingCoc() {
-        return nafexModelRepository.findAllNafexModelHavingCoc();
+    public ByteArrayInputStream findAllNafexModelHavingCoc() {
+        List<NafexModel> allModelsHavingCoc = nafexModelRepository.findAllNafexModelHavingCoc();
+        System.out.println("allModelsHavingCoc: "+allModelsHavingCoc.toString());
+        ByteArrayInputStream in = NafexModelServiceHelper.generateTextFileForNafexModelHavingCoc(allModelsHavingCoc);
+        return in;
+    }
+    public ByteArrayInputStream findAllNafexModelHavingAccountPayee() {
+        List<NafexModel> allModelsHavingAccountPayee = nafexModelRepository.findAllNafexModelHavingAccountPayee();
+        ByteArrayInputStream in = NafexModelServiceHelper.generateTextFileForNafexModelHavingAccountPayee(allModelsHavingAccountPayee);
+        return in;
     }
     public List<NafexModel> findAllNafexModelHavingBeftn() {
-        return nafexModelRepository.findAllNafexModelHavingBeftn();
-    }
-    public List<NafexModel> findAllNafexModelHavingAccountPayee() {
         return nafexModelRepository.findAllNafexModelHavingAccountPayee();
     }
 }

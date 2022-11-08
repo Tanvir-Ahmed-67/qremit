@@ -106,6 +106,104 @@ public class NafexModelServiceHelper {
         }
     }
 
+
+    public static ByteArrayInputStream generateTextFileForNafexModelHavingOnlineAccount(List<NafexModel> nafexDataModelListHavingOnlineAccount) {
+        final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.NON_NUMERIC);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format)) {
+            for (NafexModel nafexDataModel : nafexDataModelListHavingOnlineAccount) {
+                nafexDataModel.setBeneficiaryAccount(getOnlineAccountNumber(nafexDataModel.getBeneficiaryAccount()));
+                List<Object> data = Arrays.asList(
+                        nafexDataModel.getTranNo(),
+                        nafexDataModel.getExCode(),
+                        nafexDataModel.getBeneficiaryAccount(),
+                        nafexDataModel.getBeneficiary(),
+                        nafexDataModel.getRemitter(),
+                        nafexDataModel.getAmount()
+                );
+                csvPrinter.printRecord(data);
+            }
+            csvPrinter.flush();
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("failed to generate online text file: " + e.getMessage());
+        }
+    }
+
+    public static ByteArrayInputStream generateTextFileForNafexModelHavingCoc(List<NafexModel> nafexDataModelListHavingCoc) {
+        final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.NON_NUMERIC);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format)) {
+            for (NafexModel nafexDataModel : nafexDataModelListHavingCoc) {
+                List<Object> data = Arrays.asList(
+                        nafexDataModel.getTranNo(),
+                        "CRED",
+                        nafexDataModel.getEnteredDate(),
+                        nafexDataModel.getCurrency(),
+                        nafexDataModel.getAmount(),
+                        nafexDataModel.getBeneficiary(),
+                        nafexDataModel.getExCode(),
+                        nafexDataModel.getBankName(),
+                        nafexDataModel.getBranchName(),
+                        null,
+                        nafexDataModel.getBeneficiaryAccount(),
+                        nafexDataModel.getRemitter(),
+                        null,
+                        null,
+                        "4006",
+                        "PRINCIPAL BRANCH",
+                        "PRINCIPAL CORP.BR.",
+                        "22",
+                        "1",
+                        "incentivre",    // have to implement. It should be variable. So read it from properties file
+                        "5"
+                );
+                csvPrinter.printRecord(data);
+            }
+            csvPrinter.flush();
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("failed to generate coc text file: " + e.getMessage());
+        }
+    }
+    public static ByteArrayInputStream generateTextFileForNafexModelHavingAccountPayee(List<NafexModel> nafexDataModelListHavingAccountPayee) {
+        final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.NON_NUMERIC);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format)) {
+            for (NafexModel nafexDataModel : nafexDataModelListHavingAccountPayee) {
+                nafexDataModel.setBeneficiaryAccount(getOnlineAccountNumber(nafexDataModel.getBeneficiaryAccount()));
+                List<Object> data = Arrays.asList(
+                        nafexDataModel.getTranNo(),
+                        "CRED",
+                        nafexDataModel.getEnteredDate(),
+                        nafexDataModel.getCurrency(),
+                        nafexDataModel.getAmount(),
+                        nafexDataModel.getBeneficiary(),
+                        nafexDataModel.getExCode(),
+                        nafexDataModel.getBankName(),
+                        nafexDataModel.getBranchName(),
+                        null,
+                        nafexDataModel.getBeneficiaryAccount(),
+                        nafexDataModel.getRemitter(),
+                        null,
+                        null,
+                        "4006",
+                        "PRINCIPAL BRANCH",
+                        "PRINCIPAL CORP.BR.",
+                        "22",
+                        "1",
+                        "incentivre",    // have to implement. It should be variable. So read it from properties file
+                        "15"
+                );
+                csvPrinter.printRecord(data);
+            }
+            csvPrinter.flush();
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("failed to generate coc text file: " + e.getMessage());
+        }
+    }
+
     public static String putCocFlag(String accountNumber){
         if(isOnlineAccoutNumberFound(accountNumber)){
             return "0";
