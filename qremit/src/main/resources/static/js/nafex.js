@@ -18,7 +18,7 @@ function uploadSingleFile(file) {
         var response = JSON.parse(xhr.responseText);
         if(xhr.status == 200) {
             singleFileUploadError.style.display = "none";
-            singleFileUploadSuccess.innerHTML = "<p>File Uploaded Successfully.</p><p>Download Url : <a href='" + response.fileDownloadUri + "' >" + response.fileDownloadUri + "</a></p>";
+            singleFileUploadSuccess.innerHTML = "<p>Upload Successfull. Total Remittance Found - <b>"+response.message+"</b>.</p><p>Download Url : <a href='" + response.fileDownloadUri + "' >" + response.fileDownloadUri + "</a></p>";
             singleFileUploadSuccess.style.display = "block";
         } else {
             singleFileUploadSuccess.style.display = "none";
@@ -32,12 +32,12 @@ function uploadSingleFile(file) {
 }
 function clearDataTable(){
     var xhr1 = new XMLHttpRequest();
-    xhr1.open("GET", "/qremit/cleardb");
+    xhr1.open("GET", "/qremit/processData");
     xhr1.onload = function() {
         console.log(xhr1.responseText);
         if(xhr1.status == 200) {
             singleFileUploadError.style.display = "none";
-            singleFileUploadSuccess.innerHTML = "<p>Database Cleared!</p>";
+            singleFileUploadSuccess.innerHTML = "<p>File Generated!</p>";
             singleFileUploadSuccess.style.display = "block";
         } else {
             singleFileUploadSuccess.style.display = "none";

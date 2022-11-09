@@ -23,38 +23,36 @@ public class NafexModelServiceHelper {
     }
     public static List<NafexModel> csvToNafexModels(InputStream is) {
         try (BufferedReader fileReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withIgnoreHeaderCase().withTrim());) {
+             CSVParser csvParser = new CSVParser(fileReader, CSVFormat.DEFAULT.withIgnoreHeaderCase().withTrim())) {
             List<NafexModel> nafexDataModelList = new ArrayList<>();
             Iterable<CSVRecord> csvRecords = csvParser.getRecords();
             for (CSVRecord csvRecord : csvRecords) {
-                String singleLineOfData = csvRecord.get(0);
-                String[] columnNumber = singleLineOfData.split("\\|");
                 NafexModel nafexDataModel = new NafexModel(
-                        columnNumber[0].toString(), //exCode
-                        columnNumber[1].toString(), //Tranno
-                        columnNumber[2].toString(), //Currency
-                        Double.parseDouble(columnNumber[3].toString()), //Amount
-                        columnNumber[4].toString(), //enteredDate
-                        columnNumber[5].toString(), //remitter
+                        csvRecord.get(0), //exCode
+                        csvRecord.get(1), //Tranno
+                        csvRecord.get(2), //Currency
+                        Double.parseDouble(csvRecord.get(3)), //Amount
+                        csvRecord.get(4), //enteredDate
+                        csvRecord.get(5), //remitter
 
-                        columnNumber[6].toString(), // beneficiary
-                        columnNumber[7].toString(), //beneficiaryAccount
-                        columnNumber[8].toString(), //beneficiaryMobile
-                        columnNumber[9].toString(), //bankName
-                        columnNumber[10].toString(), //bankCode
-                        columnNumber[11].toString(), //branchName
-                        columnNumber[12].toString(), // branchCode
+                        csvRecord.get(6), // beneficiary
+                        csvRecord.get(7), //beneficiaryAccount
+                        csvRecord.get(12), //beneficiaryMobile
+                        csvRecord.get(8), //bankName
+                        csvRecord.get(9), //bankCode
+                        csvRecord.get(10), //branchName
+                        csvRecord.get(11), // branchCode
 
-                        columnNumber[13].toString(), //draweeBranchName
-                        columnNumber[14].toString(), //draweeBranchCode
-                        columnNumber[15].toString(), //purposeOfRemittance
-                        columnNumber[16].toString(), //sourceOfIncome
-                        columnNumber[17].toString(), //remitterMobile
+                        csvRecord.get(13), //draweeBranchName
+                        csvRecord.get(14), //draweeBranchCode
+                        csvRecord.get(15), //purposeOfRemittance
+                        csvRecord.get(16), //sourceOfIncome
+                        csvRecord.get(17), //remitterMobile
 
-                        putOnlineFlag(columnNumber[7].toString()), // checkT24
-                        putCocFlag(columnNumber[7].toString()), //checkCoc
+                        putOnlineFlag(csvRecord.get(7).trim()), // checkT24
+                        putCocFlag(csvRecord.get(7).trim()), //checkCoc
                         "0", //checkAccPayee
-                        putBeftnFlag(columnNumber[11].toString()), //checkBeftn
+                        putBeftnFlag(csvRecord.get(8).trim()), //checkBeftn
                         "0", //fileUploadedDateTime
                         "0", //fileUploadedUserIp
                         "0"); //checkProcessed
@@ -71,7 +69,7 @@ public class NafexModelServiceHelper {
         final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.NON_NUMERIC);
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format);) {
+             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format)) {
             for (NafexModel nafexDataModel : nafexDataModelList) {
                 List<Object> data = Arrays.asList(
                         nafexDataModel.getTranNo(),
@@ -108,17 +106,120 @@ public class NafexModelServiceHelper {
         }
     }
 
-    public static String putCocFlag(String accountNumber){
-        if(accountNumber.contains("coc") || accountNumber.contains("COC") ){
-            return "1";
+
+    public static ByteArrayInputStream generateTextFileForNafexModelHavingOnlineAccount(List<NafexModel> nafexDataModelListHavingOnlineAccount) {
+        final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.NON_NUMERIC);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format)) {
+            for (NafexModel nafexDataModel : nafexDataModelListHavingOnlineAccount) {
+                nafexDataModel.setBeneficiaryAccount(getOnlineAccountNumber(nafexDataModel.getBeneficiaryAccount()));
+                List<Object> data = Arrays.asList(
+                        nafexDataModel.getTranNo(),
+                        nafexDataModel.getExCode(),
+                        nafexDataModel.getBeneficiaryAccount(),
+                        nafexDataModel.getBeneficiary(),
+                        nafexDataModel.getRemitter(),
+                        nafexDataModel.getAmount()
+                );
+                csvPrinter.printRecord(data);
+            }
+            csvPrinter.flush();
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("failed to generate online text file: " + e.getMessage());
         }
-        else {
+    }
+
+    public static ByteArrayInputStream generateTextFileForNafexModelHavingCoc(List<NafexModel> nafexDataModelListHavingCoc) {
+        final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.NON_NUMERIC);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format)) {
+            for (NafexModel nafexDataModel : nafexDataModelListHavingCoc) {
+                List<Object> data = Arrays.asList(
+                        nafexDataModel.getTranNo(),
+                        "CRED",
+                        nafexDataModel.getEnteredDate(),
+                        nafexDataModel.getCurrency(),
+                        nafexDataModel.getAmount(),
+                        nafexDataModel.getBeneficiary(),
+                        nafexDataModel.getExCode(),
+                        nafexDataModel.getBankName(),
+                        nafexDataModel.getBranchName(),
+                        null,
+                        nafexDataModel.getBeneficiaryAccount(),
+                        nafexDataModel.getRemitter(),
+                        null,
+                        null,
+                        "4006",
+                        "PRINCIPAL BRANCH",
+                        "PRINCIPAL CORP.BR.",
+                        "22",
+                        "1",
+                        "incentivre",    // have to implement. It should be variable. So read it from properties file
+                        "5"
+                );
+                csvPrinter.printRecord(data);
+            }
+            csvPrinter.flush();
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("failed to generate coc text file: " + e.getMessage());
+        }
+    }
+    public static ByteArrayInputStream generateTextFileForNafexModelHavingAccountPayee(List<NafexModel> nafexDataModelListHavingAccountPayee) {
+        final CSVFormat format = CSVFormat.DEFAULT.withQuoteMode(QuoteMode.NON_NUMERIC);
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             CSVPrinter csvPrinter = new CSVPrinter(new PrintWriter(out), format)) {
+            for (NafexModel nafexDataModel : nafexDataModelListHavingAccountPayee) {
+                nafexDataModel.setBeneficiaryAccount(getOnlineAccountNumber(nafexDataModel.getBeneficiaryAccount()));
+                List<Object> data = Arrays.asList(
+                        nafexDataModel.getTranNo(),
+                        "CRED",
+                        nafexDataModel.getEnteredDate(),
+                        nafexDataModel.getCurrency(),
+                        nafexDataModel.getAmount(),
+                        nafexDataModel.getBeneficiary(),
+                        nafexDataModel.getExCode(),
+                        nafexDataModel.getBankName(),
+                        nafexDataModel.getBranchName(),
+                        null,
+                        nafexDataModel.getBeneficiaryAccount(),
+                        nafexDataModel.getRemitter(),
+                        null,
+                        null,
+                        "4006",
+                        "PRINCIPAL BRANCH",
+                        "PRINCIPAL CORP.BR.",
+                        "22",
+                        "1",
+                        "incentivre",    // have to implement. It should be variable. So read it from properties file
+                        "15"
+                );
+                csvPrinter.printRecord(data);
+            }
+            csvPrinter.flush();
+            return new ByteArrayInputStream(out.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("failed to generate coc text file: " + e.getMessage());
+        }
+    }
+
+    public static String putCocFlag(String accountNumber){
+        if(isOnlineAccoutNumberFound(accountNumber)){
             return "0";
+        }
+        else{
+            if(accountNumber.contains("coc") || accountNumber.contains("COC") ){
+                return "1";
+            }
+            else {
+                return "0";
+            }
         }
     }
     public static String getOnlineAccountNumber(String accountNumber){
-        //^.*02000(\d{8}).*$
-        Pattern p = Pattern.compile("^.*02000(\\d{8}).*$");
+        //^.*02000(\d{8})$.*
+        Pattern p = Pattern.compile("^.*02000(\\d{8})$.*");
         Matcher m = p.matcher(accountNumber);
         String onlineAccountNumber=null;
         if (m.find())
@@ -128,20 +229,43 @@ public class NafexModelServiceHelper {
         return onlineAccountNumber;
     }
     public static String putOnlineFlag(String accountNumber){
-        if(!isOnlineAccoutNumberFound(accountNumber)){
+        if(isOnlineAccoutNumberFound(accountNumber)){
+            return "1";
+        }
+        else{
             return "0";
         }
-        return "1";
     }
     public static boolean isOnlineAccoutNumberFound(String accountNumber){
-        Pattern p = Pattern.compile("^.*02000(\\d{8}).*$");
+        System.out.println(accountNumber);
+        Pattern p = Pattern.compile("^.*02000(\\d{8})$.*");
         Matcher m = p.matcher(accountNumber);
-        if (!m.find())
+        if (m.find())
         {
+            System.out.println("T24 Account No Found -"+accountNumber);
+            return true;
+        }
+        else{
             return false;
         }
-        return true;
     }
+    public static boolean isCocFound(String accountNumber){
+        if(accountNumber.contains("coc") || accountNumber.contains("COC") ){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    public static boolean isBeftnFound(String bankName){
+        if(bankName.contains("AGRANI") || bankName.contains("agrani")|| bankName.contains("Agrani") || bankName.contains("abl") || bankName.contains("Abl") || bankName.contains("ABL")){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
 
     public static String putBeftnFlag(String bankName){
         if(bankName.contains("AGRANI") || bankName.contains("agrani")|| bankName.contains("Agrani") || bankName.contains("abl") || bankName.contains("Abl") || bankName.contains("ABL")){
@@ -151,4 +275,6 @@ public class NafexModelServiceHelper {
             return "1";
         }
     }
+
+    // truncate table nafex_data_table;
 }
